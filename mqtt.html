@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <!-- Utilizar la librería para poder utilizar el protocolo MQTT-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.2.6/mqtt.js"></script>
+        <link rel="stylesheet" href="styles.css">
+<script>
+
+    //Conectarse a l broker mosquito
+    var client = mqtt.connect("ws://test.mosquitto.org:8080/mqtt");
+
+//subscribirse al canal arg, mi canal    
+function EventoConectar() {
+  console.log("Conectado a MQTT");
+  client.subscribe("mzmd/#", function (err) {
+    if (!err) {
+      //enviar el mensaje al broker a mi topic mzmd subtema acciones el mensaje de apagar
+      //para que inicie con el led apagado
+      client.publish("mzmd/accionesMez", "apagar");
+    }
+  });
+}
+
+
+//función que recibe los mensajes del broker que son del topic de mi interés
+function EventoMensaje(topic, message) {
+  if (topic == "mzmd/accionesMez") {
+    console.log("Acción " + message.toString());
+  }
+  console.log(topic + " - " + message.toString());
+  // client.end()
+}
+
+//Conectares al broker
+client.on("connect", EventoConectar);
+
+//Ponerse a la escucha de la llegada de mensajes del broker
+client.on("message", EventoMensaje);
+
+</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+<script>
+
+ 
+//función que cambia de prendido a apagado o viceversa
+function mifuncion(direccion)
+{
+  console.log(direccion);
+
+  switch(direccion){
+
+    case 'abrir':
+      client.publish("mzmd/accionesMez", "abrir");
+      document.getElementById("estado").innerHTML="...Abriendo...";
+      break;
+
+    case 'cerrar':
+      client.publish("mzmd/accionesMez", "cerrar");
+      document.getElementById("estado").innerHTML="...Cerrando...";
+      break;
+    
+    case 'encender':
+    client.publish("mzmd/accionesMez", "encender");
+    document.getElementById("estado").innerHTML="...Encender...";
+    break;
+
+    case 'apagar':
+    client.publish("mzmd/accionesMez", "apagar");
+    document.getElementById("estado").innerHTML="...Apagar...";
+    break;
+
+    default:
+      break;
+  }
+}
+
+</script>
+
+<!--Mostrar la interfaz principal de mi aplicación Web-->
+<div class="title">
+  <h2>Cochera y foco </h2>
+  <h2>con la placa NodeMCU 8266</h2>
+</div>
+  
+<div class="canvaDiv">
+    <button onclick="mifuncion('abrir')">ABRIR</button>
+    <button onclick="mifuncion('cerrar')">CERRAR</button>
+    <button onclick="mifuncion('encender')">ENCENDER</button>
+    <button onclick="mifuncion('apagar')">APAGAR</button>
+    <div class="console">
+      <h1 id="estado"></h1>
+    </div>
+  </div>
+
+</body>
+</html>
