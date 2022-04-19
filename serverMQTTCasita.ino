@@ -1,25 +1,18 @@
-//Libreria para podernos conectar el dispositivo a Internet
-
-//por Wi-Fi
+// Libreria para podernos conectar el dispositivo por Wi-Fi
 #include <ESP8266WiFi.h>
 
-//Libreria para podernos conectar al broker MQTT
-
+// Libreria para podernos conectar al broker MQTT
 #include <PubSubClient.h>
 #include "Servo.h"
 
-//Constantes para conectarnos a la red Wi-Fi mediante ssid y su contraseña
+// Constantes para conectarnos a la red Wi-Fi mediante ssid y su contraseña
+const char *ssid = "zaholy";
+const char *password = "pelusatony";
 
-const char* ssid = "zaholy";
-const char* password = "pelusatony";
+// Dirección del broker MQTT
+const char *mqtt_server = "test.mosquitto.org";
 
-//Dirección del broker MQTT
-
-const char* mqtt_server = "test.mosquitto.org";
-
-//Aquí se realiza configura la conexión del dispositivo para conectarse
-//al Wi-Fi y al broker
-
+// Configuración de conexión del dispositivo para conectarse al Wi-Fi y al broker
 WiFiClient espClient;
 
 PubSubClient client(espClient);
@@ -32,14 +25,21 @@ char msg[MSG_BUFFER_SIZE];
 
 int value = 0;
 const int servo = 4;
+const int servo2 = 14;
 const int relay = 5;
 
 Servo myservo;
 int angulo = 0;
-int paso = 180;  
-String comando; 
+int paso = 180;
+String comando;
 
-void setup_wifi() {
+Servo myservo2;
+int angulo2 = 180;
+int paso2 = 0;
+String comando2;
+
+void setup_wifi()
+{
 
   delay(10);
 
@@ -51,10 +51,10 @@ void setup_wifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
-
   }
 
   randomSeed(micros());
@@ -62,75 +62,75 @@ void setup_wifi() {
   Serial.println("WiFi conectado");
   Serial.println("Dirección IP: ");
   Serial.println(WiFi.localIP());
-
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char *topic, byte *payload, unsigned int length)
+{
   Serial.print("Llegó el mensaje del tema [");
   Serial.print(topic);
   Serial.print("] ");
 
   String message;
 
-  for (int i = 0; i < length; i++) {
-    message = message + (char) payload[i];  // convert *byte to string
+  for (int i = 0; i < length; i++)
+  {
+    message = message + (char)payload[i]; // convert *byte to string
     Serial.print((char)payload[i]);
-
   }
 
   Serial.println();
 
   Serial.print(message);
 
-  if(message=="cerrar")
+  if (message == "cerrar")
   {
-    cerrar(); 
+    cerrar();
     Serial.println("...CERRANDO...");
   }
 
-  if(message=="abrir")
+  if (message == "abrir")
   {
     abrir();
     Serial.println("...ABRIENDO...");
   }
-  
-  if(message=="encender")
+
+  if (message == "encender")
   {
     encender();
     Serial.println("...ENCENDIDO...");
   }
 
-  if(message=="apagar")
+  if (message == "apagar")
   {
     apagar();
     Serial.println("...APAGADO...");
   }
 }
 
-void reconnect() {
+void reconnect()
+{
 
   // Bucle hasta que nos volvamos a conectar
 
-  while (!client.connected()) {
+  while (!client.connected())
+  {
 
     Serial.print("Intentando la conexión MQTT...");
 
     // Crea una identificación de cliente aleatoria
-
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
 
     // Intenta conectarse
-
-    if (client.connect(clientId.c_str())) {
-
+    if (client.connect(clientId.c_str()))
+    {
       Serial.println("conectado");
 
       // ... y se suscribe
       client.subscribe("mzmd/accionesMez");
-
     }
-    else {
+    else
+    {
       Serial.print("fallido, rc =");
       Serial.print(client.state());
       Serial.println(" inténtalo de nuevo en 5 segundos");
@@ -141,46 +141,76 @@ void reconnect() {
   }
 }
 
-void setup() {
+void setup()
+{
 
   myservo.attach(servo);
   myservo.write(0);
   delay(1000);
+  myservo2.attach(servo2);
+  myservo2.write(180);
+  delay(1000);
 
-  pinMode(relay, OUTPUT);     // Inicialice el pin del relay como salida
+  pinMode(relay, OUTPUT); // Inicialice el pin del relay como salida
 
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-
 }
 
 void abrir()
 {
-  if(angulo<=(180-paso))
+  if (angulo <= (180 - paso))
   {
-    angulo+=paso;
+    angulo += paso;
 
-    for(int i=0; i<=angulo; i++){
+    for (int i = 0; i <= angulo; i++)
+    {
       myservo.write(i);
       delay(25);
     }
-    Serial.println("Derecha: " + String(angulo));                 
-  } 
+    Serial.println("Derecha: " + String(angulo));
+  }
+  delay(1000);
+
+  if (angulo2 >= (0 + paso2))
+  {
+    angulo2 -= paso2;
+
+    for (int i = 0; i >= angulo2; i--)
+    {
+      myservo2.write(i);
+      delay(25);
+    }
+    Serial.println("Derecha2: " + String(angulo2));
+  }
   delay(1000);
 }
 
 void cerrar()
 {
-  if(angulo>=(0+paso))
-  {          
-    angulo-=paso;    
-    for(int i=180; i>=angulo; i--){
+  if (angulo >= (0 + paso))
+  {
+    angulo -= paso;
+    for (int i = 180; i >= angulo; i--)
+    {
       myservo.write(i);
       delay(25);
     }
-    Serial.println("Derecha: " + String(angulo));                              
+    Serial.println("Derecha: " + String(angulo));
+  }
+  delay(1000);
+
+  if (angulo2 <= (180 - paso2))
+  {
+    angulo2 += paso2;
+    for (int i = 0; i <= angulo2; i++)
+    {
+      myservo2.write(i);
+      delay(25);
+    }
+    Serial.println("Derecha2: " + String(angulo2));
   }
   delay(1000);
 }
@@ -195,13 +225,12 @@ void apagar()
   digitalWrite(relay, HIGH);
 }
 
-
-void loop() {
-  if (!client.connected()) {
+void loop()
+{
+  if (!client.connected())
+  {
     reconnect();
   }
-  
+
   client.loop();
 }
-
- 
