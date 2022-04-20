@@ -1,0 +1,232 @@
+/* parametros generales */
+html {
+  background-color: #f0f0f0;;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: 300;
+  color: lightgray;
+}
+/* Tittle */
+.titulo {
+  display: flex;
+  justify-content: center;
+}
+
+/* acomodo de las 4 zonas */
+.block {
+  background-color: #f0f0f0;;
+  border-radius: 25px;
+  box-shadow:  10px 10px 15px #c0c0c0,
+  -10px -10px 15px #ffffff;
+  display: grid;
+  height: 600px;
+  margin-top: 1%;
+  width: 700px;
+  
+}
+/* l = left;  r = right;  t = top;  b = bottom */
+
+.l {
+  border-radius: 25px;  
+  display: grid;
+  position: static;
+  text-align: center;
+  width: 700px;
+}
+
+.ltl {
+  background-color: #f0f0f0;
+  grid-column: 1 / 2;
+  height: 300px;
+  width: 350px;
+  border-top-left-radius: 25px;
+}
+
+.ltr {
+  background-color: #f0f0f0;
+  border-top-right-radius: 25px;
+  height: 300px;
+  grid-column: 2 / 2;
+  width: 350px;
+}
+
+.lbl {
+  background-color: #f0f0f0;
+  height: 300px;
+  grid-column: 1 / 2;
+  width: 350px;
+  border-bottom-left-radius: 25px;
+  display: grid;
+}
+
+.lbr {
+  background-color: #f0f0f0;
+  border-bottom-right-radius: 25px;
+  height: 300px;
+  grid-column: 2 / 2;
+  width: 350px;
+}
+
+/* icono de los botones */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+/* Zona de manejo de carro */
+
+button {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  border-width: 0px;
+  border-radius: 10px;
+  width: 90px;
+  height: 50px;
+  background: #f0f0f0;
+  box-shadow:  5px 5px 10px #c0c0c0,
+             -5px -5px 10px #ffffff;
+}
+button:hover{
+  border-radius: 10px;
+  background: #f0f0f0;
+  box-shadow: inset 0px 0px 0px #c0c0c0,
+            inset 0px 0px 0px #ffffff;
+  transform: translate3d(0, 2%, 0);
+}
+
+button:focus{
+  border-radius: 10px;
+  background: #f0f0f0;
+  box-shadow: inset 5px 5px 10px #c0c0c0,
+            inset -5px -5px 10px #ffffff;
+  transform: translate3d(0, 6%, 0);
+}
+
+#detenerse {
+  width: 50px;
+}
+
+/* Zona de Switchs */
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color: #394a56;
+  margin-top: 30px;
+}
+
+.label-text {
+  margin-left: 16px;
+}
+
+.toggle {
+  isolation: isolate;
+  position: relative;
+  height: 100px;
+  width: 150px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow:
+    -8px -4px 8px 0px #ffffff,
+    8px 4px 12px 0px #d1d9e6,
+    4px 4px 4px 0px #d1d9e6 inset,
+    -4px -4px 4px 0px #ffffff inset;
+}
+
+.toggle-state-cochera {
+  display: none;
+}
+
+.toggle-state-luz {
+  display: none;
+}
+
+.indicator {
+  height: 100%;
+  width: 200%;
+  background: #ecf0f3;
+  border-radius: 15px;
+  transform: translate3d(-75%, 0, 0);
+  transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
+  box-shadow:
+    -8px -4px 8px 0px #ffffff,
+    8px 4px 12px 0px #d1d9e6;
+}
+
+
+.toggle-state-cochera:checked ~ .indicator {
+  transform: translate3d(25%, 0, 0);
+  background: #0a95ff;
+}
+
+.toggle-state-luz:checked ~ .indicator {
+  transform: translate3d(25%, 0, 0);
+  background: #F7FF93;
+}
+
+#cochera {
+  transform: rotate(-90deg);
+}
+
+/* pikachu */
+.holder {
+  width: max-content;
+}
+@keyframes slide {
+  0% {
+    transform: translatex(0%)
+  }
+
+  100% {
+    transform: translatex(100%)
+  }
+}
+.pika {  
+  margin-top: -950px;
+  margin-left: -650px;
+  height: 100px;
+  width: 150px;
+}
+.animation {
+  animation : slide 5s linear infinite;
+  width: 1920px;
+  height: 1px;
+  margin-top: -10px;
+  position: absolute;
+}

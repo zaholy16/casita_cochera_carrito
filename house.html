@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <!-- Utilizar la librería para poder utilizar el protocolo MQTT-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.2.6/mqtt.js"></script>
+        <link rel="stylesheet" href="styles.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <title>Churrumais House</title>
+
+<!--Script para conectar al BROKER-->
+<script>
+    //Conectarse a l broker mosquito
+    var client = mqtt.connect("ws://test.mosquitto.org:8080/mqtt");
+
+//subscribirse al canal arg, mi canal    
+function EventoConectar() {
+  console.log("Conectado a MQTT");
+  client.subscribe("mzmd/#", function (err) {
+    if (!err) {
+      //enviar el mensaje al broker a mi topic mzmd subtema acciones el mensaje de apagar
+      //para que inicie con el led apagado
+      client.publish("mzmd/accionesMez", "apagar");
+    }
+  });
+}
+
+
+//función que recibe los mensajes del broker que son del topic de mi interés
+function EventoMensaje(topic, message) {
+  if (topic == "mzmd/accionesMez") {
+    console.log("Acción " + message.toString());
+  }
+  console.log(topic + " - " + message.toString());
+  // client.end()
+}
+
+//Conectares al broker
+client.on("connect", EventoConectar);
+
+//Ponerse a la escucha de la llegada de mensajes del broker
+client.on("message", EventoMensaje);
+
+ </script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+<!--Script para mover el carro-->
+<script>
+//función que cambia de prendido a apagado o viceversa
+function carro(direccion)
+{
+  console.log(direccion);
+
+  switch(direccion){
+
+    case 'avanzar':
+      client.publish("mzmd/accionesMez", "avanzar");
+      document.getElementById("estado").innerHTML="Avanzando...";
+      break;
+
+    case 'retroceder':
+      client.publish("mzmd/accionesMez", "retroceder");
+      document.getElementById("estado").innerHTML="Retrocediendo...";
+      break;
+
+    case 'izquierda':
+      client.publish("mzmd/accionesMez", "izquierda");
+      document.getElementById("estado").innerHTML="Girando a la izquierda...";
+      break;
+
+    case 'derecha':
+      client.publish("mzmd/accionesMez", "derecha");
+      document.getElementById("estado").innerHTML="Girando a la derecha...";
+      break;
+
+    case 'detenerse':
+      client.publish("mzmd/accionesMez", "detenerse");
+      document.getElementById("estado").innerHTML="DETENIDO...";
+      break;
+
+    default:
+      break;
+  }
+}
+</script>
+
+<!--Script para Abrir la cochera-->
+<script>
+  function cochera(accion) {
+
+  if(accion.checked == true){
+    client.publish("mzmd/accionesMez", "abrir");
+    document.getElementById("estado").innerHTML="Abriendo Cochera...";
+  }else{
+    client.publish("mzmd/accionesMez", "cerrar");
+    document.getElementById("estado").innerHTML="Cerrando Cochera...";
+}
+}
+</script>
+
+<!--Script para prender la luz-->
+<script>
+  function luz(accion) {
+
+    if(accion.checked == true){
+      client.publish("mzmd/accionesMez", "encender");
+      document.getElementById("estado").innerHTML="Encendiendo Luz...";
+    }else{
+              client.publish("mzmd/accionesMez", "apagar");
+        document.getElementById("estado").innerHTML="Apagando Luz...";
+    }
+  }
+</script>
+
+<!--Mostrar la interfaz principal de mi aplicación Web-->
+<div class="titulo"><h1>Churrumais House</h1></div>
+<div class="holder">
+  <div class="animation">
+    <img class="pika" src="pika.gif">
+  </div>
+</div>
+<div class="block">
+  <div class="l">
+    <!--Seccion de la cochera-->
+    <div id="effect" class="ltl">
+      <h1>Cochera</h1>
+      <label id="cochera" class="label">
+        <div class="toggle">
+          <input class="toggle-state-cochera" type="checkbox" name="check" value="check" onchange="cochera(this)"/>
+          <div class="indicator"></div>
+        </div>
+      </label>
+    </div>
+    <!--Seccion de la luz-->
+    <div id="effect" class="ltr">
+      <h1>Luz</h1>
+      <label class="label">
+        <div class="toggle">
+          <input class="toggle-state-luz" type="checkbox" name="check" value="check" onchange="luz(this)"/>
+          <div class="indicator"></div>
+        </div>
+      </label>
+    </div>
+    <!--Seccion de uso del carro, en teoria deberia funcionar xd-->
+    <div id="effect" class="lbl">
+      <h1>Carro</h1>
+      <div>
+        <button onclick="carro('avanzar')">
+          <span class="material-icons">
+            north
+          </span>
+        </button>
+      </div>
+      <div>
+        <button onclick="carro('izquierda')">
+          <span class="material-icons">
+            west
+          </span>
+        </button>
+        <button id="detenerse" onclick="carro('detenerse')">
+          <span class="material-icons">
+            pan_tool
+          </span>
+        </button>
+        <button class="derecha" onclick="carro('derecha')">
+          <span class="material-icons">
+            east
+          </span>
+        </button>
+      </div>
+      <div>
+        <button onclick="carro('retroceder')">
+          <span class="material-icons">
+            south
+          </span>
+        </button>
+      </div>
+    </div>
+    <!--Creditos-->
+    <div id="effect" class="lbr">
+      <h1>Autores</h1>
+      <h4>Manuel Eduardo Rios Martinez</h4>
+      <h4>Regina Espinoza Gonzalez</h4>
+      <h4>Mezly Zanahoria Mondragon Delgado</h4>
+      <h4>Tony Ramirez</h4>
+      <h4>Javier Anastasio Barreto</h4>
+    </div>
+  </div>
+</div>
+<div class="console">
+  <h4 id="estado"></h4>
+</div>
+</body>
+</html>
