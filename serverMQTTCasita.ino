@@ -159,8 +159,9 @@ void setup()
   client.setCallback(callback);
 }
 
-void abrir()
+void cerrar()
 {
+  
   if (angulo <= (180 - paso))
   {
     angulo += paso;
@@ -168,51 +169,46 @@ void abrir()
     for (int i = 0; i <= angulo; i++)
     {
       myservo.write(i);
+      myservo2.write(180-i);
       delay(25);
     }
-    Serial.println("Derecha: " + String(angulo));
   }
-  delay(1000);
-
+/*
   if (angulo2 >= (0 + paso2))
   {
     angulo2 -= paso2;
-
-    for (int i = 0; i >= angulo2; i--)
+    for (int i = angulo2; i >= 0; i--)
     {
       myservo2.write(i);
       delay(25);
     }
-    Serial.println("Derecha2: " + String(angulo2));
-  }
-  delay(1000);
+  }*/
+  
 }
 
-void cerrar()
+void abrir()
 {
+  
   if (angulo >= (0 + paso))
   {
     angulo -= paso;
     for (int i = 180; i >= angulo; i--)
     {
       myservo.write(i);
+      myservo2.write((i-180)* (-1));
       delay(25);
     }
-    Serial.println("Derecha: " + String(angulo));
   }
-  delay(1000);
-
+/*
   if (angulo2 <= (180 - paso2))
   {
-    angulo2 += paso2;
+    angulo2 += paso2
     for (int i = 0; i <= angulo2; i++)
     {
       myservo2.write(i);
       delay(25);
     }
-    Serial.println("Derecha2: " + String(angulo2));
-  }
-  delay(1000);
+  }*/
 }
 
 void encender()
