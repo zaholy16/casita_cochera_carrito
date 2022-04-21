@@ -14,19 +14,21 @@ const char *mqtt_server = "test.mosquitto.org";
 
 // Configuración de conexión del dispositivo para conectarse al Wi-Fi y al broker
 WiFiClient espClient;
-
 PubSubClient client(espClient);
 
 unsigned long lastMsg = 0;
-
 #define MSG_BUFFER_SIZE (50)
-
 char msg[MSG_BUFFER_SIZE];
 
 int value = 0;
 const int servo = 4;
 const int servo2 = 14;
 const int relay = 5;
+const int AIA = 12;
+const int AIB = 13;
+const int BIA = 0;
+const int BIB = 2;
+byte velocidad = 250;
 
 Servo myservo;
 int angulo = 0;
@@ -40,7 +42,6 @@ String comando2;
 
 void setup_wifi()
 {
-
   delay(10);
 
   // Empezamos por conectarnos a una red WiFi
@@ -79,31 +80,63 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
 
   Serial.println();
-
   Serial.print(message);
-
+  
+  //Acciones de la cochera
   if (message == "cerrar")
   {
     cerrar();
-    Serial.println("...CERRANDO...");
+    Serial.println("...CERRANDO COCHERA...");
   }
 
   if (message == "abrir")
   {
     abrir();
-    Serial.println("...ABRIENDO...");
+    Serial.println("...ABRIENDO COCHERA...");
   }
 
   if (message == "encender")
   {
     encender();
-    Serial.println("...ENCENDIDO...");
+    Serial.println("...ENCENDIENDO LUZ...");
   }
 
   if (message == "apagar")
   {
     apagar();
-    Serial.println("...APAGADO...");
+    Serial.println("...APAGANDO LUZ...");
+  }
+
+  //Acciones del carrito
+  if(message=="derecha")
+  {
+    derecha(); 
+    Serial.println("...GIRANDO A LA DERECHA...");
+  }
+
+  if(message=="izquierda")
+  {
+    izquierda();
+    Serial.println("...GIRANDO A LA IZQUIERDA");
+  }
+
+  if(message=="avanzar")
+  {
+    avanzar();
+    Serial.println("...AVANZANDO...");
+  }
+
+  if(message=="retroceder")
+  {
+    retroceder();
+    Serial.println("...RETROCEDIENDO...");
+  }
+
+  if(message=="detenerse")
+  {
+    detenerse();
+    delay(1000);
+    Serial.println("...DETENIDO...");
   }
 }
 
@@ -143,7 +176,11 @@ void reconnect()
 
 void setup()
 {
-
+  pinMode(AIA, OUTPUT);
+  pinMode(AIB, OUTPUT);
+  pinMode(BIA, OUTPUT);
+  pinMode(BIB, OUTPUT);
+  
   myservo.attach(servo);
   myservo.write(0);
   delay(1000);
@@ -209,6 +246,46 @@ void abrir()
       delay(25);
     }
   }*/
+}
+
+void izquierda()
+{
+  analogWrite(AIB, 0);
+  analogWrite(AIA, 180);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, 180);
+}
+
+void derecha()
+{
+  analogWrite(AIB, 180);
+  analogWrite(AIA, 0);
+  analogWrite(BIA, 180);
+  analogWrite(BIB, 0);
+}
+
+void retroceder()
+{
+  analogWrite(AIA, 0);
+  analogWrite(AIB, velocidad);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, velocidad);
+}
+
+void avanzar()
+{
+  analogWrite(AIA, velocidad);
+  analogWrite(AIB, 0);
+  analogWrite(BIA, velocidad);
+  analogWrite(BIB, 0);
+}
+
+void detenerse()
+{
+  analogWrite(AIA, 0);
+  analogWrite(AIB, 0);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, 0);
 }
 
 void encender()
