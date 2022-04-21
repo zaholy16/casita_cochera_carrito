@@ -24,11 +24,6 @@ int value = 0;
 const int servo = 4;
 const int servo2 = 14;
 const int relay = 5;
-const int AIA = 12;
-const int AIB = 13;
-const int BIA = 0;
-const int BIB = 2;
-byte velocidad = 250;
 
 Servo myservo;
 int angulo = 0;
@@ -106,38 +101,6 @@ void callback(char *topic, byte *payload, unsigned int length)
     apagar();
     Serial.println("...APAGANDO LUZ...");
   }
-
-  //Acciones del carrito
-  if(message=="derecha")
-  {
-    derecha(); 
-    Serial.println("...GIRANDO A LA DERECHA...");
-  }
-
-  if(message=="izquierda")
-  {
-    izquierda();
-    Serial.println("...GIRANDO A LA IZQUIERDA");
-  }
-
-  if(message=="avanzar")
-  {
-    avanzar();
-    Serial.println("...AVANZANDO...");
-  }
-
-  if(message=="retroceder")
-  {
-    retroceder();
-    Serial.println("...RETROCEDIENDO...");
-  }
-
-  if(message=="detenerse")
-  {
-    detenerse();
-    delay(1000);
-    Serial.println("...DETENIDO...");
-  }
 }
 
 void reconnect()
@@ -176,11 +139,6 @@ void reconnect()
 
 void setup()
 {
-  pinMode(AIA, OUTPUT);
-  pinMode(AIB, OUTPUT);
-  pinMode(BIA, OUTPUT);
-  pinMode(BIB, OUTPUT);
-  
   myservo.attach(servo);
   myservo.write(0);
   delay(1000);
@@ -246,46 +204,6 @@ void abrir()
       delay(25);
     }
   }*/
-}
-
-void izquierda()
-{
-  analogWrite(AIB, 0);
-  analogWrite(AIA, 180);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, 180);
-}
-
-void derecha()
-{
-  analogWrite(AIB, 180);
-  analogWrite(AIA, 0);
-  analogWrite(BIA, 180);
-  analogWrite(BIB, 0);
-}
-
-void retroceder()
-{
-  analogWrite(AIA, 0);
-  analogWrite(AIB, velocidad);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, velocidad);
-}
-
-void avanzar()
-{
-  analogWrite(AIA, velocidad);
-  analogWrite(AIB, 0);
-  analogWrite(BIA, velocidad);
-  analogWrite(BIB, 0);
-}
-
-void detenerse()
-{
-  analogWrite(AIA, 0);
-  analogWrite(AIB, 0);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, 0);
 }
 
 void encender()
